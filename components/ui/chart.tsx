@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Tooltip as RechartsTooltip } from "recharts"
-import type { TooltipProps } from "recharts"
+import type { TooltipContentProps, TooltipProps } from "recharts"
 
 import { cn } from "@/lib/utils"
 
@@ -68,14 +68,19 @@ function ChartTooltip({
   )
 }
 
+type ChartTooltipContentProps = TooltipProps<number, string> &
+  Partial<
+    Pick<TooltipContentProps<number, string>, "active" | "payload" | "label">
+  > & {
+    hideLabel?: boolean
+  }
+
 function ChartTooltipContent({
   active,
   payload,
   label,
   hideLabel,
-}: TooltipProps<number, string> & {
-  hideLabel?: boolean
-}) {
+}: ChartTooltipContentProps) {
   if (!active || !payload?.length) {
     return null
   }
