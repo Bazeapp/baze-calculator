@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useState } from "react"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { ContractType } from "@/lib/calculator"
 import { CONTRACT_LIMITS } from "@/lib/calculator"
@@ -74,17 +76,58 @@ function NumberField({
   max: number
   onChange: (value: number) => void
 }) {
+  const [inputValue, setInputValue] = useState<string>(String(value))
+
+  useEffect(() => {
+    setInputValue(String(value))
+  }, [value])
+
+  const clamp = (next: number) => {
+    if (Number.isNaN(next)) return min
+    if (next < min) return min
+    if (next > max) return max
+    return next
+  }
+
   return (
     <div className="space-y-2">
       <label className="text-sm font-medium text-foreground">{label}</label>
       <input
         type="number"
-        min={min}
         max={max}
-        value={value}
+        value={inputValue}
         onChange={(event) => {
-          const next = Number(event.target.value)
-          onChange(Number.isNaN(next) ? min : next)
+          const nextValue = event.target.value
+          setInputValue(nextValue)
+
+          if (nextValue === "") {
+            return
+          }
+
+          const parsed = Number(nextValue)
+          if (Number.isNaN(parsed)) {
+            return
+          }
+
+          const clamped = Math.min(parsed, max)
+          if (clamped !== value) {
+            onChange(clamped)
+          }
+        }}
+        onBlur={() => {
+          const parsed = Number(inputValue)
+
+          if (inputValue === "" || Number.isNaN(parsed)) {
+            setInputValue(String(min))
+            onChange(min)
+            return
+          }
+
+          const clamped = clamp(parsed)
+          setInputValue(String(clamped))
+          if (clamped !== value) {
+            onChange(clamped)
+          }
         }}
         className="w-full rounded-lg border px-3 py-2 text-base shadow-sm focus:border-ring focus:outline-hidden"
       />

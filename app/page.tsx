@@ -254,7 +254,11 @@ export default function Home() {
           <CardFooter className="flex flex-col gap-3 sm:flex-row">
             <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full sm:w-auto">
+                <Button
+                  className="w-full sm:w-auto"
+                  disabled={overLimit}
+                  aria-disabled={overLimit}
+                >
                   Consulta i dettagli del costo
                 </Button>
               </DialogTrigger>
@@ -313,8 +317,14 @@ export default function Home() {
               </Link>
             </Button>
           </CardFooter>
-          <CardFooter className="pt-0">
-            <p className="text-xs text-muted-foreground">
+          <CardFooter className="flex items-start text-left flex-col gap-1 pt-0 text-xs text-muted-foreground">
+            {overLimit && (
+              <p className="text-destructive">
+                Riduci ore o giorni per rientrare nei limiti contrattuali e
+                procedere con il calcolo.
+              </p>
+            )}
+            <p>
               * La ricerca iniziale è gratuita, paghi il servizio solo se decidi
               di assumere con Baze.
             </p>
