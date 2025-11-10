@@ -1,6 +1,12 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { CONTRACT_OPTIONS } from "@/lib/calculator/ui-data"
 import type { ContractType } from "@/lib/calculator"
 import { cn } from "@/lib/utils"
@@ -26,14 +32,23 @@ export function ContractStep({ value, onChange }: Props) {
             type="button"
             onClick={() => onChange(option.id)}
             className={cn(
-              "flex flex-col rounded-lg border p-4 text-left transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
+              "flex h-full flex-col gap-4 rounded-lg border p-4 text-left transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-start sm:gap-6",
               value === option.id
                 ? "border-primary bg-primary/5"
                 : "hover:border-foreground/30",
             )}
           >
-            <span className="font-semibold">{option.title}</span>
-            <span className="text-sm text-muted-foreground">{option.description}</span>
+            <img
+              src={option.imageSrc}
+              alt={option.imageAlt}
+              className="h-20 w-20 flex-shrink-0 object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="flex flex-1 flex-col gap-1">
+              <p className="font-semibold">{option.title}</p>
+              <p className="text-sm text-muted-foreground">{option.description}</p>
+            </div>
           </button>
         ))}
       </CardContent>

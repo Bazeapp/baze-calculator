@@ -33,6 +33,7 @@ jobs:
       - name: Build Next.js app
         env:
           NEXT_PUBLIC_BASE_PATH: "/${{ github.event.repository.name }}"
+          NEXT_PUBLIC_MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
         run: npm run build
 
       - name: Upload artifact

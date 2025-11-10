@@ -21,8 +21,12 @@ export function RoleStep({ value, onToggle }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>2. Chi stai cercando?</CardTitle>
-        <CardDescription>
-          La colf è sempre inclusa. Aggiungi i servizi di cui hai bisogno.
+        <CardDescription className="space-y-2">
+          <p>La colf è sempre inclusa. Aggiungi i servizi di cui hai bisogno.</p>
+          <p className="text-xs text-muted-foreground">
+            * Con Baze trovi colf che possono anche occuparsi di cure leggere o
+            babysitting, ma non forniamo badanti o babysitter dedicate.
+          </p>
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-3 sm:grid-cols-3">
@@ -33,7 +37,7 @@ export function RoleStep({ value, onToggle }: Props) {
             onClick={() => onToggle(key)}
             disabled={key === "colf"}
             className={cn(
-              "flex h-full flex-col rounded-lg border p-4 text-left transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
+              "flex h-full flex-col gap-4 rounded-lg border p-4 text-left transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-start sm:gap-6",
               value[key]
                 ? "border-primary bg-primary/5"
                 : "hover:border-foreground/30",
@@ -41,10 +45,19 @@ export function RoleStep({ value, onToggle }: Props) {
                 "cursor-not-allowed border-dashed text-muted-foreground",
             )}
           >
-            <span className="font-semibold">{ROLE_LABELS[key].title}</span>
-            <span className="text-sm text-muted-foreground">
-              {ROLE_LABELS[key].description}
-            </span>
+            <img
+              src={ROLE_LABELS[key].imageSrc}
+              alt={ROLE_LABELS[key].imageAlt}
+              className="h-20 w-20 flex-shrink-0 object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="flex flex-1 flex-col gap-1">
+              <p className="font-semibold">{ROLE_LABELS[key].title}</p>
+              <p className="text-sm text-muted-foreground">
+                {ROLE_LABELS[key].description}
+              </p>
+            </div>
           </button>
         ))}
       </CardContent>

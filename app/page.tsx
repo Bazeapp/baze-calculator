@@ -37,6 +37,8 @@ import { cn } from "@/lib/utils";
 
 type EmailState = "idle" | "loading" | "error";
 
+const MAKE_WEBHOOK_URL = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
+
 export default function Home() {
   const [contractType, setContractType] =
     useState<ContractType>("non_convivente");
@@ -132,11 +134,18 @@ export default function Home() {
       return;
     }
 
+    if (!MAKE_WEBHOOK_URL) {
+      setEmailError(
+        "Configurazione mancante: contatta il team per attivare l'invio."
+      );
+      return;
+    }
+
     setEmailState("loading");
     setEmailError("");
 
     try {
-      const response = await fetch("/api/send-summary", {
+      const response = await fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -254,16 +263,22 @@ export default function Home() {
                 href="https://app.bazeapp.com/onboarding/iscrizione"
                 target="_blank"
               >
-                Trova una Colf gratuitamente
+                Trova una colf con Baze
               </Link>
             </Button>
+          </CardFooter>
+          <CardFooter className="pt-0">
+            <p className="text-xs text-muted-foreground">
+              * La ricerca iniziale è gratuita, paghi il servizio solo se decidi
+              di assumere con Baze.
+            </p>
           </CardFooter>
 
           {detailsUnlocked && (
             <CardContent className="border-t pt-6 space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Ti abbiamo inviato il breakdown via email.
-              </p>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>Ti abbiamo inviato il breakdown via email.</p>
+              </div>
               <div className="grid gap-6 lg:grid-cols-2">
                 <DetailedBreakdown chartData={chartData} quote={quote} />
                 <HourlyCard
@@ -278,11 +293,22 @@ export default function Home() {
                   monthlyCost={quote.costoTotaleDatore}
                 />
               </div>
-              <p className="text-sm text-muted-foreground">
-                * La nostra service fee ci permette di organizzare gratuitamente
-                i colloqui iniziali, sostenere tutti i costi delle pratiche
-                burocratiche e continuare a migliorare il nostro servizio.
-              </p>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>
+                  * La nostra service fee ci permette di organizzare
+                  gratuitamente i colloqui iniziali, sostenere tutti i costi
+                  delle pratiche burocratiche e continuare a migliorare il
+                  nostro servizio.
+                </p>
+                <Button asChild variant="outline" className="w-full sm:w-auto">
+                  <Link
+                    href="https://app.bazeapp.com/onboarding/iscrizione"
+                    target="_blank"
+                  >
+                    Trova una colf con Baze
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
           )}
         </Card>
