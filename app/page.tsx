@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { ContractStep } from "@/components/calculator/contract-step";
 import { DetailedBreakdown } from "@/components/calculator/detailed-breakdown";
@@ -54,6 +54,47 @@ export default function Home() {
   const [emailValue, setEmailValue] = useState("");
   const [emailError, setEmailError] = useState("");
   const [emailState, setEmailState] = useState<EmailState>("idle");
+  const [isEmbedded, setIsEmbedded] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    setIsEmbedded(window.self !== window.top);
+
+    const sendHeight = () => {
+      const height =
+        document.documentElement?.scrollHeight ??
+        document.body.scrollHeight ??
+        0;
+
+      window.parent?.postMessage(
+        { type: "baze-calculator:resize", height },
+        "*"
+      );
+    };
+
+    sendHeight();
+
+    let observer: ResizeObserver | null = null;
+    let fallbackListener = false;
+
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => sendHeight());
+      observer.observe(document.body);
+    } else {
+      fallbackListener = true;
+      window.addEventListener("resize", sendHeight);
+    }
+
+    return () => {
+      observer?.disconnect();
+      if (fallbackListener) {
+        window.removeEventListener("resize", sendHeight);
+      }
+    };
+  }, []);
 
   const weeklyHours = dailyHours * daysPerWeek;
   const limits = CONTRACT_LIMITS[contractType];
@@ -176,7 +217,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background pb-16">
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-12">
+      <main
+        className={cn(
+          "mx-auto flex w-full flex-col gap-8 py-12",
+          isEmbedded ? "max-w-none px-2 sm:px-4 lg:px-8" : "max-w-5xl px-4"
+        )}
+      >
         <header className="space-y-3 text-center sm:text-left">
           <h1 className="text-balance text-3xl font-semibold sm:text-4xl">
             Stima quanto costa assumere con Baze
