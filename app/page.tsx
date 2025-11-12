@@ -265,10 +265,9 @@ export default function Home() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Ricevi il resoconto completo</DialogTitle>
+                  <DialogTitle>Consulta il resoconto completo</DialogTitle>
                   <DialogDescription>
-                    Inserisci la tua email per sbloccare il dettaglio dei costi
-                    e riceverlo nella tua casella di posta.
+                    Inserisci la tua email per sbloccare il dettaglio dei costi.
                   </DialogDescription>
                 </DialogHeader>
                 <form className="space-y-4" onSubmit={handleEmailSubmit}>
