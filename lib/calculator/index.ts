@@ -43,10 +43,9 @@ export function calculateQuote(input: CalculatorInput): CalculatorOutput {
   const contributiInpsDatore =
     pagaLordaLavoratore * CONTRIBUTION_RATES.inps.employer;
 
-  const pagaNettaLavoratore =
-    pagaLordaLavoratore -
-    contributiColfLavoratore -
-    contributiInpsLavoratore;
+  // Il netto riconosciuto alla collaboratrice è fisso a 9 €/h, quindi corrisponde
+  // alla paga lorda oraria senza trattenere i contributi a suo carico.
+  const pagaNettaLavoratore = pagaLordaLavoratore;
 
   const indennitaTfr = pagaLordaLavoratore * ACCRUAL_RATES.tfr;
   const indennitaFerie = pagaLordaLavoratore * ACCRUAL_RATES.ferie;

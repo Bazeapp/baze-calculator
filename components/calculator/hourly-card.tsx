@@ -8,8 +8,10 @@ import { cn } from "@/lib/utils";
 
 const CHECKLIST = [
   "Paga della collaboratrice",
-  "Cedolini e versamento contributi",
-  "Sostituzioni garantite",
+  "Contributi INPS",
+  "TFR, ferie e 13esima",
+  "Tutte le pratiche burocratiche",
+  "Assicurazione danni fino a € 2 milioni",
 ];
 
 type Props = {
@@ -39,17 +41,17 @@ export function HourlyCard({
     <Card className="border-white shadow-none">
       <div className="flex flex-col gap-6 px-6">
         <div className="space-y-3">
-          <p className="text-6xl font-extrabold text-foreground">
+          <p className="text-5xl font-extrabold text-foreground sm:text-6xl">
             {formatCurrency(hourlyPrice, 2)}
           </p>
-          <p className="text-xl font-semibold text-foreground">
+          <p className="text-lg font-semibold text-foreground sm:text-xl">
             all&apos;ora, inclusa ogni voce di costo
           </p>
         </div>
-        <ul className="space-y-2 text-sm">
+        <ul className="space-y-2 text-sm sm:text-base">
           {CHECKLIST.map((item) => (
-            <li key={item} className="flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-primary" />
+            <li key={item} className="flex items-start gap-2">
+              <CheckCircle2 className="h-3.5 w-3.5 flex-shrink-0 text-primary sm:h-4 sm:w-4" />
               <span>{item}</span>
             </li>
           ))}
@@ -71,11 +73,8 @@ export function HourlyCard({
               value={formatCurrency(breakdown.contributions, 2)}
             />
             <Row
-              label="+ Accantonamenti"
-              value={`${formatCurrency(
-                breakdown.accruals,
-                2
-              )} (13ª, ferie, TFR)`}
+              label="+ Accantonamenti (13ª, ferie, TFR)"
+              value={formatCurrency(breakdown.accruals, 2)}
             />
           </div>
           <div className="space-y-1">
@@ -103,12 +102,14 @@ function Row({
   return (
     <div
       className={cn(
-        "flex items-center justify-between text-sm",
-        emphasis && "text-lg font-semibold text-foreground"
+        "flex gap-3 text-sm sm:gap-4",
+        emphasis && "text-base font-semibold text-foreground sm:text-lg"
       )}
     >
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-foreground">{value}</span>
+      <span className="flex-1 text-muted-foreground leading-snug">{label}</span>
+      <span className="text-foreground text-right whitespace-nowrap">
+        {value}
+      </span>
     </div>
   );
 }

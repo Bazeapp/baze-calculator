@@ -225,9 +225,8 @@ export default function Home() {
       >
         <header className="space-y-3 text-center sm:text-left">
           <h1 className="text-balance text-3xl font-semibold sm:text-4xl">
-            Stima quanto costa assumere con Baze
+            Calcola il costo di una colf con Baze
           </h1>
-          <p className="text-muted-foreground">Calcola quanto costa una Colf</p>
         </header>
 
         <section className="grid gap-6">
@@ -246,7 +245,9 @@ export default function Home() {
 
         <Card id="risultato">
           <CardHeader>
-            <CardDescription>Quanto paghi con Baze / mese</CardDescription>
+            <CardDescription>
+              Quanto pagheresti con Baze al mese (tutto incluso){" "}
+            </CardDescription>
             <CardTitle className="text-4xl font-extrabold">
               {formatCurrency(quote.costoTotaleDatore)}
             </CardTitle>
@@ -264,7 +265,7 @@ export default function Home() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Ricevi il breakdown completo</DialogTitle>
+                  <DialogTitle>Ricevi il resoconto completo</DialogTitle>
                   <DialogDescription>
                     Inserisci la tua email per sbloccare il dettaglio dei costi
                     e riceverlo nella tua casella di posta.
@@ -325,16 +326,15 @@ export default function Home() {
               </p>
             )}
             <p>
-              * La ricerca iniziale è gratuita, paghi il servizio solo se decidi
-              di assumere con Baze.
+              * Con Baze, se stai cercando, puoi trovare una colf a Milano. La
+              ricerca iniziale è gratuita, inizi a pagare solo se decidi di
+              assumere uno dei profili conosciuti
             </p>
           </CardFooter>
 
           {detailsUnlocked && (
             <CardContent className="border-t pt-6 space-y-4">
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <p>Ti abbiamo inviato il breakdown via email.</p>
-              </div>
+              <div className="space-y-2 text-sm text-muted-foreground"></div>
               <div className="grid gap-6 lg:grid-cols-2">
                 <DetailedBreakdown chartData={chartData} quote={quote} />
                 <HourlyCard
@@ -352,18 +352,11 @@ export default function Home() {
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
                   * La nostra service fee ci permette di organizzare
-                  gratuitamente i colloqui iniziali, sostenere tutti i costi
-                  delle pratiche burocratiche e continuare a migliorare il
-                  nostro servizio.
+                  gratuitamente i colloqui iniziali, garantirti un assicurazione
+                  fino a 2 milioni di euro, sostenere tutti i costi delle
+                  pratiche burocratiche e continuare a migliorare il nostro
+                  servizio.
                 </p>
-                <Button asChild variant="outline" className="w-full sm:w-auto">
-                  <Link
-                    href="https://app.bazeapp.com/onboarding/iscrizione"
-                    target="_blank"
-                  >
-                    Trova una colf con Baze
-                  </Link>
-                </Button>
               </div>
             </CardContent>
           )}
