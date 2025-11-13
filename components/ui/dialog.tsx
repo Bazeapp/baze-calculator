@@ -54,12 +54,14 @@ function DialogContent({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
-  position?: "center" | "bottom"
+  position?: "center" | "bottom" | "top"
 }) {
   const positionClasses =
     position === "bottom"
       ? "left-1/2 top-auto bottom-4 translate-x-[-50%] translate-y-0 sm:bottom-6"
-      : "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
+      : position === "top"
+        ? "left-1/2 top-4 translate-x-[-50%] translate-y-0 sm:top-8"
+        : "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]"
 
   return (
     <DialogPortal data-slot="dialog-portal">
