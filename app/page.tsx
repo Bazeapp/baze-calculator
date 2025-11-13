@@ -18,15 +18,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   calculateQuote,
   CONTRACT_LIMITS,
   ContractType,
@@ -50,7 +41,7 @@ export default function Home() {
   const [dailyHours, setDailyHours] = useState(4);
   const [daysPerWeek, setDaysPerWeek] = useState(5);
   const [detailsUnlocked, setDetailsUnlocked] = useState(false);
-  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
   const [emailValue, setEmailValue] = useState("");
   const [emailError, setEmailError] = useState("");
   const [emailState, setEmailState] = useState<EmailState>("idle");
@@ -207,7 +198,7 @@ export default function Home() {
 
       setDetailsUnlocked(true);
       setEmailState("idle");
-      setEmailDialogOpen(false);
+      setShowEmailForm(false);
     } catch (error) {
       console.error(error);
       setEmailState("error");
@@ -216,10 +207,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (emailDialogOpen && resultRef.current) {
+    if (showEmailForm && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [emailDialogOpen]);
+  }, [showEmailForm]);
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -259,69 +250,74 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex flex-col gap-3 sm:flex-row">
-            <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
-              <DialogTrigger asChild>
+            {!detailsUnlocked && !showEmailForm && (
+              <>
                 <Button
                   className="w-full sm:w-auto"
                   disabled={overLimit}
                   aria-disabled={overLimit}
+                  onClick={() => {
+                    if (overLimit) return;
+                    setShowEmailForm(true);
+                    setEmailError("");
+                  }}
                 >
                   Consulta i dettagli del costo
                 </Button>
-              </DialogTrigger>
-              <DialogContent position="top-mobile">
-                <DialogHeader>
-                  <DialogTitle>Consulta il resoconto completo</DialogTitle>
-                  <DialogDescription>
-                    Inserisci la tua email per sbloccare il dettaglio dei costi.
-                  </DialogDescription>
-                </DialogHeader>
-                <form className="space-y-4" onSubmit={handleEmailSubmit}>
-                  <div className="space-y-2">
-                    <label
-                      className="text-sm font-medium text-foreground"
-                      htmlFor="email"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      value={emailValue}
-                      onChange={(event) => setEmailValue(event.target.value)}
-                      className={cn(
-                        "w-full rounded-md border px-3 py-2 text-sm shadow-sm",
-                        emailError && "border-destructive"
-                      )}
-                      placeholder="nome@azienda.it"
-                    />
-                    {emailError && (
-                      <p className="text-xs text-destructive">{emailError}</p>
-                    )}
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      type="submit"
-                      className="w-full sm:w-auto"
-                      disabled={emailState === "loading"}
-                    >
-                      {emailState === "loading"
-                        ? "Invio in corso..."
-                        : "Sblocca i dettagli"}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+                <Button asChild variant="outline" className="w-full sm:w-auto">
+                  <Link
+                    href="https://app.bazeapp.com/onboarding/iscrizione"
+                    target="_blank"
+                  >
+                    Trova una colf con Baze
+                  </Link>
+                </Button>
+              </>
+            )}
 
-            <Button asChild variant="outline" className="w-full sm:w-auto">
-              <Link
-                href="https://app.bazeapp.com/onboarding/iscrizione"
-                target="_blank"
-              >
-                Trova una colf con Baze
-              </Link>
-            </Button>
+            {!detailsUnlocked && showEmailForm && (
+              <form className="w-full space-y-4" onSubmit={handleEmailSubmit}>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-foreground">
+                    Inserisci la tua email per sbloccare il dettaglio dei costi.
+                  </p>
+                  <input
+                    id="email"
+                    type="email"
+                    value={emailValue}
+                    onChange={(event) => setEmailValue(event.target.value)}
+                    className={cn(
+                      "w-full rounded-md border px-3 py-2 text-sm shadow-sm",
+                      emailError && "border-destructive"
+                    )}
+                    placeholder="nome@azienda.it"
+                  />
+                  {emailError && (
+                    <p className="text-xs text-destructive">{emailError}</p>
+                  )}
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full sm:w-auto"
+                  disabled={emailState === "loading"}
+                >
+                  {emailState === "loading"
+                    ? "Invio in corso..."
+                    : "Sblocca i dettagli"}
+                </Button>
+              </form>
+            )}
+
+            {detailsUnlocked && (
+              <Button asChild variant="outline" className="w-full sm:w-auto">
+                <Link
+                  href="https://app.bazeapp.com/onboarding/iscrizione"
+                  target="_blank"
+                >
+                  Trova una colf con Baze
+                </Link>
+              </Button>
+            )}
           </CardFooter>
           <CardFooter className="flex items-start text-left flex-col gap-1 pt-0 text-xs text-muted-foreground">
             {overLimit && (
