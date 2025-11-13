@@ -269,7 +269,7 @@ export default function Home() {
                   Consulta i dettagli del costo
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent position="bottom">
                 <DialogHeader>
                   <DialogTitle>Consulta il resoconto completo</DialogTitle>
                   <DialogDescription>
