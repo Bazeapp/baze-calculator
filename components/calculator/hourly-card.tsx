@@ -68,6 +68,9 @@ export function HourlyCard({
               label="+ Service Fee Baze *"
               value={formatCurrency(breakdown.service, 2)}
             />
+            <p className=" text-xs text-muted-foreground">
+              (Assicurazione, Costi Amministrativi, Fee Baze)
+            </p>
             <Row
               label="+ Contributi e Cassa Colf"
               value={formatCurrency(breakdown.contributions, 2)}

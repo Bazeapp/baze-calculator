@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ContractStep } from "@/components/calculator/contract-step";
 import { DetailedBreakdown } from "@/components/calculator/detailed-breakdown";
@@ -55,6 +55,7 @@ export default function Home() {
   const [emailError, setEmailError] = useState("");
   const [emailState, setEmailState] = useState<EmailState>("idle");
   const [isEmbedded, setIsEmbedded] = useState(false);
+  const resultRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -159,9 +160,8 @@ export default function Home() {
   const hourlyNet = quote.pagaNettaLavoratore / safeMonthlyHours;
   const hourlyContributions = contributiTotDatore / safeMonthlyHours;
   const hourlyAccantonamenti = quote.indennitaTot / safeMonthlyHours;
-  const hourlyServiceFee = quote.serviceFeeHourly;
-  const totalHourlyPrice =
-    hourlyNet + hourlyContributions + hourlyAccantonamenti + hourlyServiceFee;
+  const hourlyServiceFee = quote.serviceFeeMonthly / safeMonthlyHours;
+  const totalHourlyPrice = quote.costoTotaleDatore / safeMonthlyHours;
 
   const handleRoleToggle = (key: keyof RoleSelection) => {
     if (key === "colf") return;
@@ -215,6 +215,12 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (emailDialogOpen && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [emailDialogOpen]);
+
   return (
     <div className="min-h-screen bg-background pb-16">
       <main
@@ -243,7 +249,7 @@ export default function Home() {
           />
         </section>
 
-        <Card id="risultato">
+        <Card id="risultato" ref={resultRef}>
           <CardHeader>
             <CardDescription>
               Quanto pagheresti con Baze al mese (tutto incluso){" "}

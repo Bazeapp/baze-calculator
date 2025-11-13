@@ -25,19 +25,22 @@ export function HoursStep({
   onDailyChange,
   onDaysChange,
 }: Props) {
+  const MIN_DAILY_HOURS = 3
   const limits = CONTRACT_LIMITS[contractType]
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>3. Quante ore servono?</CardTitle>
-        <CardDescription>Organizza la settimana (solo lunedì-sabato).</CardDescription>
+        <CardDescription>
+          Organizza la settimana (almeno 3 ore al giorno, solo lunedì-sabato).
+        </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6 sm:grid-cols-2">
         <NumberField
           label="Ore al giorno"
           value={dailyHours}
-          min={1}
+          min={MIN_DAILY_HOURS}
           max={limits.daily}
           onChange={onDailyChange}
         />
@@ -94,6 +97,7 @@ function NumberField({
       <label className="text-sm font-medium text-foreground">{label}</label>
       <input
         type="number"
+        min={min}
         max={max}
         value={inputValue}
         onChange={(event) => {
@@ -109,7 +113,7 @@ function NumberField({
             return
           }
 
-          const clamped = Math.min(parsed, max)
+          const clamped = clamp(parsed)
           if (clamped !== value) {
             onChange(clamped)
           }

@@ -49,6 +49,28 @@ export const BAZE_FEE = {
   thresholdHours: 25,
 } as const;
 
+export type FixedBreakdown = {
+  hourlyNet: number;
+  hourlyContributionsDatore: number;
+  hourlyAccruals: number;
+  hourlyServiceFee: number;
+};
+
+export const FIXED_BREAKDOWNS: Partial<Record<ContractType, FixedBreakdown>> = {
+  non_convivente: {
+    hourlyNet: 9,
+    hourlyContributionsDatore: 1.22,
+    hourlyAccruals: 2.31,
+    hourlyServiceFee: 1,
+  },
+  convivente: {
+    hourlyNet: 5.98,
+    hourlyContributionsDatore: 1.27,
+    hourlyAccruals: 1.75,
+    hourlyServiceFee: 1,
+  },
+};
+
 export const CONTRIBUTION_RATES = {
   inps: {
     worker: 0.073,

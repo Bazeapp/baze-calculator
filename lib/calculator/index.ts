@@ -6,6 +6,8 @@ import {
   CalculatorOutput,
   CONTRIBUTION_RATES,
   CONTRACT_LIMITS,
+  FIXED_BREAKDOWNS,
+  FixedBreakdown,
   WEEKS_PER_MONTH,
 } from "./constants";
 
@@ -15,9 +17,35 @@ const roundCurrency = (value: number) =>
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
+const ACCRUAL_RATE_SUM =
+  ACCRUAL_RATES.tfr + ACCRUAL_RATES.ferie + ACCRUAL_RATES.tredicesima;
+
+const splitAccruals = (total: number) => {
+  if (ACCRUAL_RATE_SUM === 0) {
+    return {
+      indennitaTfr: 0,
+      indennitaFerie: 0,
+      indennitaTredicesima: 0,
+    };
+  }
+
+  const ratio = {
+    tfr: ACCRUAL_RATES.tfr / ACCRUAL_RATE_SUM,
+    ferie: ACCRUAL_RATES.ferie / ACCRUAL_RATE_SUM,
+    tredicesima: ACCRUAL_RATES.tredicesima / ACCRUAL_RATE_SUM,
+  };
+
+  return {
+    indennitaTfr: total * ratio.tfr,
+    indennitaFerie: total * ratio.ferie,
+    indennitaTredicesima: total * ratio.tredicesima,
+  };
+};
+
 export function normalizeInput(input: CalculatorInput): CalculatorInput {
+  const MIN_DAILY_HOURS = 3;
   const limits = CONTRACT_LIMITS[input.contractType];
-  const dailyHours = clamp(input.dailyHours, 1, limits.daily);
+  const dailyHours = clamp(input.dailyHours, MIN_DAILY_HOURS, limits.daily);
   const daysPerWeek = clamp(input.daysPerWeek, 1, 6);
   return { ...input, dailyHours, daysPerWeek };
 }
@@ -29,6 +57,17 @@ export function calculateQuote(input: CalculatorInput): CalculatorOutput {
   const effectiveWeeklyHours = Math.min(weeklyHours, limits.weekly);
   const monthlyHours = effectiveWeeklyHours * WEEKS_PER_MONTH;
   const roundedMonthlyHours = roundCurrency(monthlyHours);
+  const roundedWeeklyHours = roundCurrency(effectiveWeeklyHours);
+
+  const fixedBreakdown = FIXED_BREAKDOWNS[safeInput.contractType];
+  if (fixedBreakdown) {
+    return calculateFixedQuote({
+      breakdown: fixedBreakdown,
+      monthlyHours,
+      roundedMonthlyHours,
+      roundedWeeklyHours,
+    });
+  }
 
   const baseGross = monthlyHours * BASE_HOURLY_RATE;
   const pagaLordaLavoratore = baseGross;
@@ -78,7 +117,65 @@ export function calculateQuote(input: CalculatorInput): CalculatorOutput {
     indennitaTredicesima: roundCurrency(indennitaTredicesima),
     indennitaTot: roundCurrency(indennitaTot),
     costoTotaleDatore: roundCurrency(costoTotaleDatore),
-    weeklyHours: roundCurrency(effectiveWeeklyHours),
+    weeklyHours: roundedWeeklyHours,
+    monthlyHours: roundedMonthlyHours,
+    serviceFeeHourly: roundCurrency(serviceFeeHourly),
+    serviceFeeMonthly: roundCurrency(serviceFeeMonthly),
+  };
+}
+
+function calculateFixedQuote({
+  breakdown,
+  monthlyHours,
+  roundedMonthlyHours,
+  roundedWeeklyHours,
+}: {
+  breakdown: FixedBreakdown;
+  monthlyHours: number;
+  roundedMonthlyHours: number;
+  roundedWeeklyHours: number;
+}): CalculatorOutput {
+  const pagaNettaLavoratore = breakdown.hourlyNet * monthlyHours;
+  const pagaLordaLavoratore = pagaNettaLavoratore;
+
+  const indennitaTot = breakdown.hourlyAccruals * monthlyHours;
+  const {
+    indennitaFerie,
+    indennitaTfr,
+    indennitaTredicesima,
+  } = splitAccruals(indennitaTot);
+
+  const contributiTotDatore =
+    breakdown.hourlyContributionsDatore * monthlyHours;
+  const cassaPerHour = Math.min(
+    CONTRIBUTION_RATES.cassaColf.employerPerHour,
+    breakdown.hourlyContributionsDatore
+  );
+  const contributiColfDatore = cassaPerHour * monthlyHours;
+  const contributiInpsDatore = contributiTotDatore - contributiColfDatore;
+
+  const serviceFeeHourly = breakdown.hourlyServiceFee;
+  const serviceFeeMonthly = serviceFeeHourly * monthlyHours;
+
+  const costoTotaleDatore =
+    pagaNettaLavoratore +
+    contributiTotDatore +
+    indennitaTot +
+    serviceFeeMonthly;
+
+  return {
+    pagaLordaLavoratore: roundCurrency(pagaLordaLavoratore),
+    contributiColfLavoratore: 0,
+    contributiInpsLavoratore: 0,
+    pagaNettaLavoratore: roundCurrency(pagaNettaLavoratore),
+    contributiColfDatore: roundCurrency(contributiColfDatore),
+    contributiInpsDatore: roundCurrency(contributiInpsDatore),
+    indennitaTfr: roundCurrency(indennitaTfr),
+    indennitaFerie: roundCurrency(indennitaFerie),
+    indennitaTredicesima: roundCurrency(indennitaTredicesima),
+    indennitaTot: roundCurrency(indennitaTot),
+    costoTotaleDatore: roundCurrency(costoTotaleDatore),
+    weeklyHours: roundedWeeklyHours,
     monthlyHours: roundedMonthlyHours,
     serviceFeeHourly: roundCurrency(serviceFeeHourly),
     serviceFeeMonthly: roundCurrency(serviceFeeMonthly),
