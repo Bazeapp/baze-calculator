@@ -29,6 +29,8 @@ import { cn } from "@/lib/utils";
 type EmailState = "idle" | "loading" | "error";
 
 const MAKE_WEBHOOK_URL = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
+const ONBOARDING_URL =
+  "https://app.bazeapp.com/onboarding/iscrizione?source=calculator";
 
 export default function Home() {
   const [contractType, setContractType] =
@@ -153,6 +155,8 @@ export default function Home() {
   const hourlyAccantonamenti = quote.indennitaTot / safeMonthlyHours;
   const hourlyServiceFee = quote.serviceFeeMonthly / safeMonthlyHours;
   const totalHourlyPrice = quote.costoTotaleDatore / safeMonthlyHours;
+  const totalCostDisplay = formatCurrency(quote.costoTotaleDatore);
+  const isCostObfuscated = !detailsUnlocked;
 
   const handleRoleToggle = (key: keyof RoleSelection) => {
     if (key === "colf") return;
@@ -246,7 +250,20 @@ export default function Home() {
               Quanto pagheresti con Baze al mese (tutto incluso){" "}
             </CardDescription>
             <CardTitle className="text-4xl font-extrabold">
-              {formatCurrency(quote.costoTotaleDatore)}
+              <span
+                className={cn(
+                  "inline-block transition-[filter] duration-200",
+                  isCostObfuscated && "select-none blur-sm"
+                )}
+                aria-hidden={isCostObfuscated}
+              >
+                {totalCostDisplay}
+              </span>
+              {isCostObfuscated && (
+                <span className="sr-only">
+                  Costo nascosto finché non inserisci la mail
+                </span>
+              )}
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex flex-col gap-3 sm:flex-row">
@@ -266,7 +283,7 @@ export default function Home() {
                 </Button>
                 <Button asChild variant="outline" className="w-full sm:w-auto">
                   <Link
-                    href="https://app.bazeapp.com/onboarding/iscrizione"
+                    href={ONBOARDING_URL}
                     target="_blank"
                   >
                     Trova una colf con Baze
@@ -311,7 +328,7 @@ export default function Home() {
             {detailsUnlocked && (
               <Button asChild variant="outline" className="w-full sm:w-auto">
                 <Link
-                  href="https://app.bazeapp.com/onboarding/iscrizione"
+                  href={ONBOARDING_URL}
                   target="_blank"
                 >
                   Trova una colf con Baze
