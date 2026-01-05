@@ -26,7 +26,7 @@ import {
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-type EmailState = "idle" | "loading" | "error";
+type PhoneState = "idle" | "loading" | "error";
 
 const MAKE_WEBHOOK_URL = process.env.NEXT_PUBLIC_MAKE_WEBHOOK_URL;
 const ONBOARDING_URL =
@@ -43,10 +43,10 @@ export default function Home() {
   const [dailyHours, setDailyHours] = useState(4);
   const [daysPerWeek, setDaysPerWeek] = useState(5);
   const [detailsUnlocked, setDetailsUnlocked] = useState(false);
-  const [showEmailForm, setShowEmailForm] = useState(false);
-  const [emailValue, setEmailValue] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [emailState, setEmailState] = useState<EmailState>("idle");
+  const [showPhoneForm, setShowPhoneForm] = useState(false);
+  const [phoneValue, setPhoneValue] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [phoneState, setPhoneState] = useState<PhoneState>("idle");
   const [isEmbedded, setIsEmbedded] = useState(false);
   const resultRef = useRef<HTMLDivElement | null>(null);
 
@@ -163,29 +163,30 @@ export default function Home() {
     setRoles((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleEmailSubmit = async (event: FormEvent) => {
+  const handlePhoneSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!emailValue || !/^\S+@\S+\.\S+$/.test(emailValue)) {
-      setEmailError("Inserisci un indirizzo email valido");
+    const normalizedPhone = phoneValue.replace(/\D/g, "");
+    if (normalizedPhone.length < 7 || normalizedPhone.length > 15) {
+      setPhoneError("Inserisci un numero di telefono valido");
       return;
     }
 
     if (!MAKE_WEBHOOK_URL) {
-      setEmailError(
+      setPhoneError(
         "Configurazione mancante: contatta il team per attivare l'invio."
       );
       return;
     }
 
-    setEmailState("loading");
-    setEmailError("");
+    setPhoneState("loading");
+    setPhoneError("");
 
     try {
       const response = await fetch(MAKE_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: emailValue,
+          phone: phoneValue,
           selections: {
             contractType,
             roles,
@@ -201,20 +202,20 @@ export default function Home() {
       }
 
       setDetailsUnlocked(true);
-      setEmailState("idle");
-      setShowEmailForm(false);
+      setPhoneState("idle");
+      setShowPhoneForm(false);
     } catch (error) {
       console.error(error);
-      setEmailState("error");
-      setEmailError("Si è verificato un errore, riprova tra un momento.");
+      setPhoneState("error");
+      setPhoneError("Si è verificato un errore, riprova tra un momento.");
     }
   };
 
   useEffect(() => {
-    if (showEmailForm && resultRef.current) {
+    if (showPhoneForm && resultRef.current) {
       resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [showEmailForm]);
+  }, [showPhoneForm]);
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -267,7 +268,7 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex flex-col gap-3 sm:flex-row">
-            {!detailsUnlocked && !showEmailForm && (
+            {!detailsUnlocked && !showPhoneForm && (
               <>
                 <Button
                   className="w-full sm:w-auto"
@@ -275,66 +276,50 @@ export default function Home() {
                   aria-disabled={overLimit}
                   onClick={() => {
                     if (overLimit) return;
-                    setShowEmailForm(true);
-                    setEmailError("");
+                    setShowPhoneForm(true);
+                    setPhoneError("");
                   }}
                 >
                   Consulta i dettagli del costo
                 </Button>
-                <Button asChild variant="outline" className="w-full sm:w-auto">
-                  <Link
-                    href={ONBOARDING_URL}
-                    target="_blank"
-                  >
-                    Trova una colf con Baze
-                  </Link>
-                </Button>
               </>
             )}
 
-            {!detailsUnlocked && showEmailForm && (
-              <form className="w-full space-y-4" onSubmit={handleEmailSubmit}>
+            {!detailsUnlocked && showPhoneForm && (
+              <form className="w-full space-y-4" onSubmit={handlePhoneSubmit}>
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-foreground">
-                    Inserisci la tua email per sbloccare il dettaglio dei costi.
+                    Inserisci il tuo telefono per sbloccare il dettaglio dei costi.
                   </p>
                   <input
-                    id="email"
-                    type="email"
-                    value={emailValue}
-                    onChange={(event) => setEmailValue(event.target.value)}
+                    id="phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    value={phoneValue}
+                    onChange={(event) => setPhoneValue(event.target.value)}
                     className={cn(
                       "w-full rounded-md border px-3 py-2 text-sm shadow-sm",
-                      emailError && "border-destructive"
+                      phoneError && "border-destructive"
                     )}
-                    placeholder="nome@azienda.it"
+                    placeholder="+39 333 123 4567"
                   />
-                  {emailError && (
-                    <p className="text-xs text-destructive">{emailError}</p>
+                  {phoneError && (
+                    <p className="text-xs text-destructive">{phoneError}</p>
                   )}
                 </div>
                 <Button
                   type="submit"
                   className="w-full sm:w-auto"
-                  disabled={emailState === "loading"}
+                  disabled={phoneState === "loading"}
                 >
-                  {emailState === "loading"
+                  {phoneState === "loading"
                     ? "Invio in corso..."
                     : "Sblocca i dettagli"}
                 </Button>
               </form>
             )}
 
-            {detailsUnlocked && (
-              <Button asChild variant="outline" className="w-full sm:w-auto">
-                <Link
-                  href={ONBOARDING_URL}
-                  target="_blank"
-                >
-                  Trova una colf con Baze
-                </Link>
-              </Button>
-            )}
           </CardFooter>
           <CardFooter className="flex items-start text-left flex-col gap-1 pt-0 text-xs text-muted-foreground">
             {overLimit && (

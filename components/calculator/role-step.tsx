@@ -37,7 +37,7 @@ export function RoleStep({ value, onToggle }: Props) {
             onClick={() => onToggle(key)}
             disabled={key === "colf"}
             className={cn(
-              "flex h-full flex-col gap-4 rounded-lg border p-4 text-left transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-start sm:gap-6",
+              "flex h-full flex-row items-start gap-4 rounded-lg border p-4 text-left transition focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring sm:gap-6",
               value[key]
                 ? "border-primary bg-primary/5"
                 : "hover:border-foreground/30",
