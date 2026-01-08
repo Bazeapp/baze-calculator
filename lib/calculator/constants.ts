@@ -80,7 +80,7 @@ export const FIXED_BREAKDOWN_TIERS: Partial<
       maxWeeklyHours: 7,
       breakdown: {
         hourlyNet: 9,
-        hourlyContributionsDatore: 1.89,
+        hourlyContributionsDatore: 1.97,
         hourlyAccruals: 2.34,
         hourlyServiceFee: 3,
       },
@@ -90,7 +90,7 @@ export const FIXED_BREAKDOWN_TIERS: Partial<
       maxWeeklyHours: 11,
       breakdown: {
         hourlyNet: 9,
-        hourlyContributionsDatore: 1.89,
+        hourlyContributionsDatore: 1.97,
         hourlyAccruals: 2.34,
         hourlyServiceFee: 1.2,
       },
@@ -100,7 +100,7 @@ export const FIXED_BREAKDOWN_TIERS: Partial<
       maxWeeklyHours: 24,
       breakdown: {
         hourlyNet: 9,
-        hourlyContributionsDatore: 1.89,
+        hourlyContributionsDatore: 1.97,
         hourlyAccruals: 2.34,
         hourlyServiceFee: 1,
       },
