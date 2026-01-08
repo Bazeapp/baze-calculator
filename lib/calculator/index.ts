@@ -6,6 +6,7 @@ import {
   CalculatorOutput,
   CONTRIBUTION_RATES,
   CONTRACT_LIMITS,
+  FIXED_BREAKDOWN_TIERS,
   FIXED_BREAKDOWNS,
   FixedBreakdown,
   WEEKS_PER_MONTH,
@@ -59,7 +60,10 @@ export function calculateQuote(input: CalculatorInput): CalculatorOutput {
   const roundedMonthlyHours = roundCurrency(monthlyHours);
   const roundedWeeklyHours = roundCurrency(effectiveWeeklyHours);
 
-  const fixedBreakdown = FIXED_BREAKDOWNS[safeInput.contractType];
+  const fixedBreakdown = selectFixedBreakdown(
+    safeInput.contractType,
+    effectiveWeeklyHours
+  );
   if (fixedBreakdown) {
     return calculateFixedQuote({
       breakdown: fixedBreakdown,
@@ -122,6 +126,31 @@ export function calculateQuote(input: CalculatorInput): CalculatorOutput {
     serviceFeeHourly: roundCurrency(serviceFeeHourly),
     serviceFeeMonthly: roundCurrency(serviceFeeMonthly),
   };
+}
+
+function selectFixedBreakdown(
+  contractType: CalculatorInput["contractType"],
+  weeklyHours: number
+): FixedBreakdown | undefined {
+  const tiers = FIXED_BREAKDOWN_TIERS[contractType];
+  if (tiers && tiers.length > 0) {
+    const matched = tiers.find(
+      (tier) =>
+        weeklyHours >= tier.minWeeklyHours &&
+        weeklyHours <= tier.maxWeeklyHours
+    );
+    if (matched) {
+      return matched.breakdown;
+    }
+
+    if (weeklyHours < tiers[0].minWeeklyHours) {
+      return tiers[0].breakdown;
+    }
+
+    return tiers[tiers.length - 1].breakdown;
+  }
+
+  return FIXED_BREAKDOWNS[contractType];
 }
 
 function calculateFixedQuote({

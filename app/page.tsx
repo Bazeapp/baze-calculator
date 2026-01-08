@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 import { ContractStep } from "@/components/calculator/contract-step";
 import { DetailedBreakdown } from "@/components/calculator/detailed-breakdown";
@@ -97,55 +97,43 @@ export default function Home() {
     weeklyHours > limits.weekly ||
     weeklyHours <= 0;
 
-  const quote = useMemo(
-    () =>
-      calculateQuote({
-        contractType,
-        roleSelections: roles,
-        dailyHours,
-        daysPerWeek,
-        duration: "indeterminato",
-      }),
-    [contractType, roles, dailyHours, daysPerWeek]
-  );
+  const quote = calculateQuote({
+    contractType,
+    roleSelections: roles,
+    dailyHours,
+    daysPerWeek,
+    duration: "indeterminato",
+  });
 
-  const chartData = useMemo(() => {
-    if (!detailsUnlocked) return [];
-    return [
-      {
-        label: "Paga netta",
-        value: quote.pagaNettaLavoratore,
-        color: "oklch(0.55 0.14 249)",
-      },
-      {
-        label: "Contributi INPS datore",
-        value: quote.contributiInpsDatore,
-        color: "oklch(0.67 0.12 145)",
-      },
-      {
-        label: "Cassa Colf",
-        value: quote.contributiColfDatore,
-        color: "oklch(0.73 0.08 95)",
-      },
-      {
-        label: "Accantonamenti",
-        value: quote.indennitaTot,
-        color: "oklch(0.78 0.09 35)",
-      },
-      {
-        label: "Service Fee Baze",
-        value: quote.serviceFeeMonthly,
-        color: "oklch(0.85 0.05 55)",
-      },
-    ];
-  }, [
-    detailsUnlocked,
-    quote.contributiColfDatore,
-    quote.contributiInpsDatore,
-    quote.indennitaTot,
-    quote.pagaNettaLavoratore,
-    quote.serviceFeeMonthly,
-  ]);
+  const chartData = detailsUnlocked
+    ? [
+        {
+          label: "Paga netta",
+          value: quote.pagaNettaLavoratore,
+          color: "oklch(0.55 0.14 249)",
+        },
+        {
+          label: "Contributi INPS datore",
+          value: quote.contributiInpsDatore,
+          color: "oklch(0.67 0.12 145)",
+        },
+        {
+          label: "Cassa Colf",
+          value: quote.contributiColfDatore,
+          color: "oklch(0.73 0.08 95)",
+        },
+        {
+          label: "Accantonamenti",
+          value: quote.indennitaTot,
+          color: "oklch(0.78 0.09 35)",
+        },
+        {
+          label: "Service Fee Baze",
+          value: quote.serviceFeeMonthly,
+          color: "oklch(0.85 0.05 55)",
+        },
+      ]
+    : [];
 
   const safeMonthlyHours = quote.monthlyHours || 1;
   const contributiTotDatore =

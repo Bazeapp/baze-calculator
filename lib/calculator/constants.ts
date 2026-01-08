@@ -56,19 +56,66 @@ export type FixedBreakdown = {
   hourlyServiceFee: number;
 };
 
+export type FixedBreakdownTier = {
+  minWeeklyHours: number;
+  maxWeeklyHours: number;
+  breakdown: FixedBreakdown;
+};
+
 export const FIXED_BREAKDOWNS: Partial<Record<ContractType, FixedBreakdown>> = {
-  non_convivente: {
-    hourlyNet: 9,
-    hourlyContributionsDatore: 1.22,
-    hourlyAccruals: 2.31,
-    hourlyServiceFee: 1,
-  },
   convivente: {
     hourlyNet: 5.98,
     hourlyContributionsDatore: 1.27,
     hourlyAccruals: 1.75,
     hourlyServiceFee: 1,
   },
+};
+
+export const FIXED_BREAKDOWN_TIERS: Partial<
+  Record<ContractType, FixedBreakdownTier[]>
+> = {
+  non_convivente: [
+    {
+      minWeeklyHours: 3,
+      maxWeeklyHours: 7,
+      breakdown: {
+        hourlyNet: 9,
+        hourlyContributionsDatore: 1.89,
+        hourlyAccruals: 2.34,
+        hourlyServiceFee: 3,
+      },
+    },
+    {
+      minWeeklyHours: 8,
+      maxWeeklyHours: 11,
+      breakdown: {
+        hourlyNet: 9,
+        hourlyContributionsDatore: 1.89,
+        hourlyAccruals: 2.34,
+        hourlyServiceFee: 1.2,
+      },
+    },
+    {
+      minWeeklyHours: 12,
+      maxWeeklyHours: 24,
+      breakdown: {
+        hourlyNet: 9,
+        hourlyContributionsDatore: 1.89,
+        hourlyAccruals: 2.34,
+        hourlyServiceFee: 1,
+      },
+    },
+    {
+      minWeeklyHours: 25,
+      maxWeeklyHours: 40,
+      breakdown: {
+        hourlyNet: 9,
+        hourlyContributionsDatore: 1.22,
+        hourlyAccruals: 2.31,
+        hourlyServiceFee: 1,
+      },
+    },
+  ],
 };
 
 export const CONTRIBUTION_RATES = {
