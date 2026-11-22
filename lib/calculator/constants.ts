@@ -71,6 +71,16 @@ export const FIXED_BREAKDOWNS: Partial<Record<ContractType, FixedBreakdown>> = {
   },
 };
 
+// Listino unico Baze, tutto incluso, per ore settimanali (non conviventi):
+// 3–7 h 16,30 €; 8–11 h 14,70 €; 12–19 h 14,50 €; 20–24 h 14,30 €; da 25 h 13,60 €.
+// Fino a 24 h: 9 € netti + 1,96 contributi + 2,34 accantonamenti = 13,30 € + service fee.
+// Oltre 24 h i contributi INPS sono più bassi: 9 + 1,29 + 2,31 = 12,60 € + 1 €.
+const NON_CONVIVENTE_BASE = {
+  hourlyNet: 9,
+  hourlyContributionsDatore: 1.96,
+  hourlyAccruals: 2.34,
+} as const;
+
 export const FIXED_BREAKDOWN_TIERS: Partial<
   Record<ContractType, FixedBreakdownTier[]>
 > = {
@@ -78,45 +88,38 @@ export const FIXED_BREAKDOWN_TIERS: Partial<
     {
       minWeeklyHours: 3,
       maxWeeklyHours: 7,
-      breakdown: {
-        hourlyNet: 9,
-        hourlyContributionsDatore: 1.97,
-        hourlyAccruals: 2.34,
-        hourlyServiceFee: 3,
-      },
+      breakdown: { ...NON_CONVIVENTE_BASE, hourlyServiceFee: 3 },
     },
     {
       minWeeklyHours: 8,
       maxWeeklyHours: 11,
-      breakdown: {
-        hourlyNet: 9,
-        hourlyContributionsDatore: 1.97,
-        hourlyAccruals: 2.34,
-        hourlyServiceFee: 1.2,
-      },
+      breakdown: { ...NON_CONVIVENTE_BASE, hourlyServiceFee: 1.4 },
     },
     {
       minWeeklyHours: 12,
+      maxWeeklyHours: 19,
+      breakdown: { ...NON_CONVIVENTE_BASE, hourlyServiceFee: 1.2 },
+    },
+    {
+      minWeeklyHours: 20,
       maxWeeklyHours: 24,
-      breakdown: {
-        hourlyNet: 9,
-        hourlyContributionsDatore: 1.97,
-        hourlyAccruals: 2.34,
-        hourlyServiceFee: 1,
-      },
+      breakdown: { ...NON_CONVIVENTE_BASE, hourlyServiceFee: 1 },
     },
     {
       minWeeklyHours: 25,
       maxWeeklyHours: 40,
       breakdown: {
         hourlyNet: 9,
-        hourlyContributionsDatore: 1.22,
+        hourlyContributionsDatore: 1.29,
         hourlyAccruals: 2.31,
         hourlyServiceFee: 1,
       },
     },
   ],
 };
+
+// Colf pagata in nero a Milano, in contanti: riferimento per il confronto.
+export const NERO_HOURLY_RANGE = { min: 12, max: 15 } as const;
 
 export const CONTRIBUTION_RATES = {
   inps: {

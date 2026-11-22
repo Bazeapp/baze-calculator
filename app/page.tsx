@@ -7,6 +7,7 @@ import { ContractStep } from "@/components/calculator/contract-step";
 import { DetailedBreakdown } from "@/components/calculator/detailed-breakdown";
 import { HoursStep } from "@/components/calculator/hours-step";
 import { HourlyCard } from "@/components/calculator/hourly-card";
+import { NeroComparison } from "@/components/calculator/nero-comparison";
 import { RoleStep } from "@/components/calculator/role-step";
 import { Button } from "@/components/ui/button";
 import {
@@ -352,6 +353,12 @@ export default function Home() {
             </CardContent>
           )}
         </Card>
+
+        <NeroComparison
+          bazeHourlyPrice={
+            detailsUnlocked && !overLimit ? totalHourlyPrice : undefined
+          }
+        />
       </main>
     </div>
   );
