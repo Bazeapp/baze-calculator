@@ -318,9 +318,8 @@ export default function Home() {
               </p>
             )}
             <p>
-              * Con Baze, se stai cercando, puoi trovare una colf a Milano. La
-              ricerca iniziale è gratuita, inizi a pagare solo se decidi di
-              assumere uno dei profili conosciuti
+              * Con Baze puoi trovare una colf a Milano, Monza e Torino: ti
+              presentiamo profili della tua zona, già incontrati di persona.
             </p>
           </CardFooter>
 
@@ -343,11 +342,9 @@ export default function Home() {
               </div>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p>
-                  * La nostra service fee ci permette di organizzare
-                  gratuitamente i colloqui iniziali, garantirti un assicurazione
-                  fino a 2 milioni di euro, sostenere tutti i costi delle
-                  pratiche burocratiche e continuare a migliorare il nostro
-                  servizio.
+                  * La nostra service fee copre la selezione con colloqui di
+                  persona, l&apos;assicurazione danni fino a 2 milioni di euro,
+                  tutti i costi delle pratiche burocratiche e le sostituzioni.
                 </p>
               </div>
             </CardContent>
